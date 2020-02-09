@@ -1,0 +1,194 @@
+﻿@page "/"
+
+@using Gestao_de_Entregas.Data
+@inject GerenciadorService objGerenciadorService
+@inject NavigationManager NavigationManager
+
+<div class="row">
+    <div class="col-sm-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">Entregas</div>
+            <div class="card-body">
+                <p class="card-text">
+                    <table class="d-xl-table-row">
+                        <thead>
+                            <tr>
+                                <th>Situação</th>
+                                <th width="10px">Quantidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in EstatisticasEntregas)
+                            {
+                                <tr>
+                                    <td>@item.Key.ToString()</td>
+                                    <td align="right">@item.Value.ToString()</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card text-white bg-danger mb-3">
+            <div class="card-header">Coletas</div>
+            <div class="card-body">
+                <p class="card-text">
+                    <table class="d-xl-table-row">
+                        <thead>
+                            <tr>
+                                <th>Situação</th>
+                                <th width="10px">Quantidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in EstatisticasColetas)
+                            {
+                                <tr>
+                                    <td>@item.Key.ToString()</td>
+                                    <td align="right">@item.Value.ToString()</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card text-white bg-secondary mb-3">
+            <div class="card-header">Faltas</div>
+            <div class="card-body">
+                <p class="card-text">
+                    <table class="d-xl-table-row">
+                        <thead>
+                            <tr>
+                                <th>Situação</th>
+                                <th width="10px">Quantidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in EstatisticasFaltas)
+                            {
+                                <tr>
+                                    <td>@item.Key.ToString()</td>
+                                    <td align="right">@item.Value.ToString()</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card text-white bg-info" style="height: 20rem">
+            <div class="card-header">Últimas solicitações de coletas</div>
+            <div class="card-body">
+                <div class="card-text">
+                    <table class="d-xl-table-row">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Data da coleta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Coleta coleta in coletas)
+                            {
+                                <tr>
+                                    <td>@coleta.NomeCliente</td>
+                                    <td align="right">@coleta.DataColeta.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class=" card text-white bg-success" style="height: 20rem">
+            <div class="card-header">Últimas solicitações de entregas</div>
+            <div class="card-body">
+                <div class="card-text">
+                    <table class="d-xl-table-row">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Data da solicitação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (EntregaUrgente entrega in entregaUrgentes)
+                            {
+                                <tr>
+                                    <td>@entrega.Destinatario</td>
+                                    <td align="right">@entrega.DataSolicitacao.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code{
+
+    SortedList<string, int> EstatisticasColetas;
+    SortedList<string, int> EstatisticasEntregas;
+    SortedList<string, int> EstatisticasFaltas;
+    List<Coleta> coletas;
+    List<EntregaUrgente> entregaUrgentes;
+
+    private void BuscarColetas()
+    {
+        coletas = objGerenciadorService.Obter8Coletas();
+
+        if (coletas == null)
+        {
+            coletas.Add(new Coleta());
+        }
+    }
+
+    private void BuscarEntregas()
+    {
+        entregaUrgentes = objGerenciadorService.Obter8Entregas();
+
+        if (entregaUrgentes == null)
+        {
+            entregaUrgentes.Add(new EntregaUrgente());
+        }
+    }
+
+    private void BuscarEstatisticasColetas()
+    {
+        EstatisticasColetas = objGerenciadorService.ObterEstatisticasColetas();
+    }
+
+    private void BuscarEstatisticasEntregas()
+    {
+        EstatisticasEntregas = objGerenciadorService.ObterEstatisticasEntregas();
+    }
+
+    private void BuscarEstatisticasFaltas()
+    {
+        EstatisticasFaltas = objGerenciadorService.ObterEstatisticasFaltas();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        BuscarEstatisticasColetas();
+        BuscarEstatisticasEntregas();
+        BuscarEstatisticasFaltas();
+        BuscarColetas();
+        BuscarEntregas();
+    }
+}

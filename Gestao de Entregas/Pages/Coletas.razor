@@ -1,0 +1,323 @@
+﻿@page "/coletas"
+
+@using Gestao_de_Entregas.Data
+@using Microsoft.AspNetCore.Identity
+@using System.Text
+@using System.Security.Claims
+
+@inject GerenciadorService objGerenciadorService
+@inject UserManager<IdentityUser> _UserManager
+
+<h2>Lista de clientes que solicitaram coleta</h2>
+
+<button class="btn btn-primary" @onclick="(() => AdicionarColeta())">Adicionar Coleta</button>
+
+@if (ListaColeta == null)
+{
+    <p>Carregando...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Remetente</th>
+                <th>Data da coleta</th>
+                <th>Solicitante</th>
+                <th>Data da solicitação</th>
+                <th>Marcar como</th>
+                <th>Detalhes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Coleta coleta in ListaResumida)
+            {
+                <tr>
+                    <td>@coleta.ColetaId</td>
+                    <td>@coleta.NomeCliente</td>
+                    <td>@coleta.DataColeta</td>
+                    <td>@coleta.Solicitante</td>
+                    <td>@coleta.DataSolicitacao</td>
+                    <td>
+                        @if (coleta.Coletado)
+                        {
+                            <button class="btn btn-secondary" disabled>Coletado</button>
+                            <button class="btn btn-primary" disabled>Cancelado</button>
+                        }
+                        else if (coleta.Cancelado)
+                        {
+                            <button class="btn btn-primary" disabled>Coletado</button>
+                            <button class="btn btn-secondary" disabled>Cancelado</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-primary" @onclick="(() => MarcarColetado(coleta))">Coletado</button>
+                            <button class="btn btn-primary" @onclick="(() => MarcarCancelado(coleta))">Cancelado</button>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => MostrarDetalhes(coleta))">...</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<button class="btn btn-primary" @onclick="(() => ProximaPagina())">Mais +</button>
+
+@*---------inicio inclusão de Urgencia---------------------*@
+@if (MostraPopup)
+{
+    <!-- Este popup permite criar uma solicitação de urgencia-->
+    <div class="modal" tabindex="-1" style="display:block" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Solicitar Coleta</h3>
+                    <button type="button" class="close" @onclick="FechaPopup">
+                        <span aria-hidden="true">X</span>
+                    </button>
+                </div>
+                <!-- Edita o formulário para a coleta atual -->
+                <div class="modal-body">
+                    <!-- Somente mostra o ID se não for um novo usuário -->
+                    <p>Informe os dados do cliente</p>
+                    <!-- somnete permite editar se for um novo usuario -->
+                    Remetente:
+                    <input class="form-control" type="text" placeholder="Remetente" @bind="objcoleta.NomeCliente" />
+                    Data da coleta:
+                    <input class="form-control" type="datetime" placeholder="Data" @bind="objcoleta.DataColeta" />
+                    Metragem:
+                    <input class="form-control" type="number" placeholder="Metragem" @bind="objcoleta.Metragem" />
+                    Peso:
+                    <input class="form-control" type="number" placeholder="Peso" @bind="objcoleta.Peso" />
+                    Volumes:
+                    <input class="form-control" type="number" placeholder="Volumes" @bind="objcoleta.Volumes" />
+                    Solicitante:
+                    <input class="form-control" type="text" placeholder="Solicitante" @bind="objcoleta.Solicitante" />
+                    Observações:
+                    <input class="form-control" type="text" placeholder="Observações" @bind="objcoleta.Observacoes" />
+
+                    <br />
+                    <!-- Botão para salvar o usuário -->
+                    <button class="btn btn-primary" @onclick="SalvaColeta">
+                        Salvar
+                    </button>
+
+                    @if (objcoleta.ColetaId != 0)
+                    {
+                        <button class="btn btn-primary" @onclick="(() => BuscarColetaStatus(objcoleta))">
+                            Registros
+                        </button>
+                    }
+                    <br />
+                    <span style="color:red">@strError</span>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (MostraStatusPopup)
+{
+    {
+        <!-- Este popup permite criar uma solicitação de urgencia-->
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Exibindo registros da coleta</h3>
+                            <button type="button" class="close" @onclick="FechaStatusPopup">
+                                <span aria-hidden="true">X</span>
+                            </button>
+                        </div>
+                        <!-- Edita o formulário para a falta atual -->
+                        <div class="modal-body">
+                            <!-- somnete permite editar se for um novo usuario -->
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Data ocorrência</th>
+                                        <th>Ocorrência</th>
+                                        <th>Usúario</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (ColetaStatus coletaStatus in ListaColetaStatus)
+                                    {
+                                        <tr>
+                                            <td>@coletaStatus.DataStatus</td>
+                                            <td>@coletaStatus.Observacao</td>
+                                            <td>@coletaStatus.Usuario.UserName</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code
+{
+    public List<Coleta> ListaColeta;
+    public List<Coleta> ListaResumida;
+    public List<ColetaStatus> ListaColetaStatus;
+
+    ClaimsPrincipal UsuarioAtual;
+    IdentityUser Usuario;
+
+    Coleta objcoleta = new Coleta();
+    ColetaStatus objColetaStatus = new ColetaStatus();
+    public string strError = "";
+    int pagina;
+
+    // Habilita a exibição do Popup
+    bool MostraPopup = false;
+    bool MostraStatusPopup = false;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private void AdicionarColeta()
+    {
+        objcoleta = new Coleta();
+        MostraPopup = true;
+    }
+
+    private void MarcarCancelado(Coleta coleta)
+    {
+        try
+        {
+            coleta.Cancelado = true;
+            objGerenciadorService.AtualizarColeta(coleta);
+
+            objColetaStatus = new ColetaStatus { Coleta = coleta, DataStatus = DateTime.Now, Usuario = this.Usuario, Observacao = "Coleta foi cancelada" };
+            objGerenciadorService.InserirColetaStatus(objColetaStatus);
+
+        }
+        catch (Exception ex)
+        {
+            strError = ex.Message.ToString();
+        }
+
+        Buscarcoleta();
+    }
+
+    private void MarcarColetado(Coleta coleta)
+    {
+        try
+        {
+            coleta.Coletado = true;
+            objGerenciadorService.AtualizarColeta(coleta);
+
+            objColetaStatus = new ColetaStatus { Coleta = coleta, DataStatus = DateTime.Now, Usuario = this.Usuario, Observacao = "Coleta Realizada" };
+            objGerenciadorService.InserirColetaStatus(objColetaStatus);
+        }
+        catch (Exception ex)
+        {
+            strError = ex.Message.ToString();
+        }
+
+        Buscarcoleta();
+
+    }
+
+    private void SalvaColeta()
+    {
+        try
+        {
+            objcoleta.Usuario = Usuario;
+            objcoleta.DataSolicitacao = DateTime.Now;
+
+            if (objcoleta.ColetaId == 0)
+            {
+                objColetaStatus = new ColetaStatus { Coleta = objcoleta, DataStatus = DateTime.Now, Usuario = this.Usuario, Observacao = "Solicitação de coleta realizada" };
+            }
+            else
+            {
+                objColetaStatus = new ColetaStatus { Coleta = objcoleta, DataStatus = DateTime.Now, Usuario = this.Usuario, Observacao = "Solicitação de coleta alterada" };
+            }
+
+            objGerenciadorService.AtualizarColeta(objcoleta);
+            objGerenciadorService.InserirColetaStatus(objColetaStatus);
+
+            MostraPopup = false;
+        }
+        catch (Exception ex)
+        {
+            strError = ex.Message.ToString();
+        }
+
+        Buscarcoleta();
+
+    }
+
+    private void BuscarColetaStatus(Coleta coleta)
+    {
+        ListaColetaStatus = objGerenciadorService.ObterColetaStatus(coleta);
+        MostraStatusPopup = true;
+    }
+
+    private void Buscarcoleta()
+    {
+        pagina = 0;
+        ListaColeta = new List<Coleta>();
+        strError = "";
+
+        try
+        {
+            ListaColeta = objGerenciadorService.ObterColeta();
+        }
+        catch (Exception ex)
+        {
+            strError = ex.Message.ToString();
+        }
+
+        ProximaPagina();
+    }
+
+    private void ProximaPagina()
+    {
+        ListaResumida = new List<Coleta>();
+        int count = ListaColeta.Count;
+        pagina += 10;
+
+        for (int i = 0; i < ListaColeta.Count && i < pagina; i++)
+        {
+            ListaResumida.Add(ListaColeta[i]);
+        }
+    }
+
+    private void MostrarDetalhes(Coleta coleta)
+    {
+        objcoleta = coleta;
+        MostraPopup = true;
+    }
+
+    public void FechaPopup()
+    {
+        // fecha o popup
+        MostraPopup = false;
+        Buscarcoleta();
+    }
+
+    public void FechaStatusPopup()
+    {
+        MostraStatusPopup = false;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Buscarcoleta();
+        UsuarioAtual = (await authenticationStateTask).User;
+        var usuario = await _UserManager.FindByEmailAsync(UsuarioAtual.Identity.Name);
+        Usuario = usuario;
+    }
+}

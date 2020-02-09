@@ -1,0 +1,362 @@
+﻿@page "/faltas"
+
+@using Gestao_de_Entregas.Data
+@using Microsoft.AspNetCore.Identity
+@using System.Text
+@using System.Security.Claims
+
+@inject GerenciadorService objGerenciadorService
+@inject UserManager<IdentityUser> _UserManager
+
+<h2>Lista de faltas</h2>
+
+<button class="btn btn-primary" @onclick="(() => AdicionarFalta())">Adicionar Falta</button>
+
+@if (ListaFalta == null)
+{
+    <p>Carregando...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th width="14">Remetente</th>
+                <th>Data da falta</th>
+                <th width="11">Nota fiscal</th>
+                <th width="8">Conhecimento</th>
+                <th>Volumes faltantes</th>
+                <th>Status</th>
+                <th>Detalhes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Falta falta in ListaResumida)
+            {
+                <tr>
+                    <td>@falta.Remetente</td>
+                    <td>@falta.DataFalta.ToShortDateString()</td>
+                    <td>@falta.NumeroNota</td>
+                    <td>@falta.NumeroCTE</td>
+                    <td>@falta.VolumesFaltante</td>
+                    <td>
+
+                        @if (falta.Encontrado)
+                        {
+                            <button class="btn btn-primary" disabled>Adicionar</button>
+                            <button class="btn btn-primary" @onclick="(() => MostrarStatus(falta))">Mostrar</button>
+
+                        }
+                        else
+                        {
+                            <button class="btn btn-primary" @onclick="(() => AdicionarStatus(falta))">Adicionar</button>
+                            <button class="btn btn-primary" @onclick="(() => MostrarStatus(falta))">Mostrar</button>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => MostrarDetalhes(falta))">...</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<button class="btn btn-primary" @onclick="(() => ProximaPagina())">Mais +</button>
+
+@*---------inicio inclusão de Urgencia---------------------*@
+@if (MostraPopup)
+{
+    <!-- Este popup permite criar uma solicitação de urgencia-->
+    <div class="modal" tabindex="-1" style="display:block" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Adicionar falta</h3>
+                    <button type="button" class="close" @onclick="FechaPopup">
+                        <span aria-hidden="true">X</span>
+                    </button>
+                </div>
+                <!-- Edita o formulário para a falta atual -->
+                <div class="modal-body">
+                    <!-- Somente mostra o ID se não for um novo usuário -->
+                    <p>Informe os dados da falta</p>
+                    <p>Usuario: @Usuario.UserName</p>
+                    <!-- somnete permite editar se for um novo usuario -->
+                    <input class="form-control" type="text" placeholder="Remetente" @bind="objfalta.Remetente" />
+                    <input class="form-control" type="datetime" placeholder="Destinatario" @bind="objfalta.Destinatario" />
+                    <b>Número da nota: <input class="form-control" type="number" placeholder="Número da Nota" @bind="objfalta.NumeroNota" /></b>
+                    Número do CTE: <input class="form-control" type="number" placeholder="Número do CTE" @bind="objfalta.NumeroCTE" />
+                    Volumes faltantes: <input class="form-control" type="number" placeholder="Volumes Faltantes" @bind="objfalta.VolumesFaltante" />
+                    @if (objfalta.Usuario != null)
+                    {
+                        <b>Incluida por: @objfalta.Usuario.UserName</b>
+                    }
+
+                    <br /><br />
+
+                    <!-- Botão para salvar o usuário -->
+                    <button class="btn btn-primary" @onclick="Salvafalta">
+                        Salvar
+                    </button>
+
+                    <br />
+                    <span style="color:red">@strError</span>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (AdicionarStatusPopup)
+{
+    {
+        <!-- Este popup permite criar uma solicitação de urgencia-->
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Adicionar registro</h3>
+                        <button type="button" class="close" @onclick="FechaPopup">
+                            <span aria-hidden="true">X</span>
+                        </button>
+                    </div>
+                    <!-- Edita o formulário para a falta atual -->
+                    <div class="modal-body">
+                        <!-- Somente mostra o ID se não for um novo usuário -->
+                        <p>Informe a situação da falta</p>
+                        <p>Usuario: @Usuario.UserName</p>
+                        <!-- somnete permite editar se for um novo usuario -->
+                        <InputTextArea @bind-Value="objStatus.Observacao" />
+                        <input class="form-control" type="text" placeholder="Situação atual" @bind="objStatus.Observacao" />
+                        <br /><br />
+
+                        @if (objfalta.Encontrado)
+                        {
+
+                            <button class="btn btn-primary" disabled>Encontrado</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-primary" @onclick="(() => MarcarEncontrado(objfalta))">Encontrado</button>
+
+                        }
+
+                        <!-- Botão para salvar o usuário -->
+                        <button class="btn btn-primary" @onclick="SalvaStatus">
+                            Salvar
+                        </button>
+
+                        <br />
+                        <span style="color:red">@strError</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@if (MostraStatusPopup)
+{
+    {
+        <!-- Este popup permite criar uma solicitação de urgencia-->
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Exibindo registros da falta</h3>
+                            <button type="button" class="close" @onclick="FechaPopup">
+                                <span aria-hidden="true">X</span>
+                            </button>
+                        </div>
+                        <!-- Edita o formulário para a falta atual -->
+                        <div class="modal-body">
+                            <!-- somnete permite editar se for um novo usuario -->
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Data ocorrência</th>
+                                        <th>Ocorrência</th>
+                                        <th>Usúario</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (FaltaStatus faltaStatus in ListaFaltaStatus)
+                                    {
+                                        <tr>
+                                            <td>@faltaStatus.DataStatus</td>
+                                            <td>@faltaStatus.Observacao</td>
+                                            <td>@faltaStatus.Usuario.UserName</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+@*---------fim da inclusão de usuários---------------------*@
+
+@code
+{
+    public List<Falta> ListaFalta;
+    public List<Falta> ListaResumida;
+    public List<FaltaStatus> ListaFaltaStatus;
+
+    ClaimsPrincipal UsuarioAtual;
+    IdentityUser Usuario;
+
+    Falta objfalta = new Falta();
+    FaltaStatus objStatus = new FaltaStatus();
+    public string strError = "";
+    int pagina;
+
+    // Habilita a exibição do Popup
+    bool MostraPopup = false;
+    bool AdicionarStatusPopup = false;
+    bool MostraStatusPopup = false;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private void AdicionarFalta()
+    {
+        objfalta = new Falta();
+        MostraPopup = true;
+    }
+
+    private void AdicionarStatus(Falta falta)
+    {
+        objfalta = falta;
+        objStatus = new FaltaStatus();
+        AdicionarStatusPopup = true;
+    }
+
+    private void MostrarStatus(Falta falta)
+    {
+        try
+        {
+            ListaFaltaStatus = objGerenciadorService.ObterFaltaStatus(falta);
+        }
+        catch (Exception ex)
+        {
+            strError = ex.Message.ToString();
+        }
+
+        MostraStatusPopup = true;
+    }
+
+    private void MarcarEncontrado(Falta falta)
+    {
+        try
+        {
+            falta.Encontrado = true;
+            FaltaStatus StatusEncontrado = new FaltaStatus { DataStatus = DateTime.Now, Falta = falta, Observacao = "Volume econtrado", Usuario = this.Usuario };
+
+            objGerenciadorService.AtualizarFalta(falta);
+            objGerenciadorService.InserirFaltaStatus(StatusEncontrado);
+
+        }
+        catch (Exception ex)
+        {
+            strError = ex.Message.ToString();
+        }
+
+        Buscarfalta();
+    }
+
+    private void Salvafalta()
+    {
+        try
+        {
+            objfalta.Usuario = Usuario;
+            objfalta.DataFalta = DateTime.Now;
+            objGerenciadorService.AtualizarFalta(objfalta);
+
+            FaltaStatus StatusNovo = new FaltaStatus { DataStatus = DateTime.Now, Falta = objfalta, Observacao = "Falta registrada", Usuario = this.Usuario };
+            objGerenciadorService.InserirFaltaStatus(StatusNovo);
+            MostraPopup = false;
+        }
+        catch (Exception ex)
+        {
+            strError = ex.Message.ToString();
+        }
+
+        Buscarfalta();
+
+    }
+
+    private void SalvaStatus()
+    {
+        try
+        {
+            objStatus.DataStatus = DateTime.Now;
+            objStatus.Falta = objfalta;
+            objStatus.Usuario = Usuario;
+            objGerenciadorService.InserirFaltaStatus(objStatus);
+            AdicionarStatusPopup = false;
+        }
+        catch (Exception ex)
+        {
+
+            strError = ex.Message.ToString();
+        }
+    }
+
+    private void Buscarfalta()
+    {
+        pagina = 0;
+        ListaFalta = new List<Falta>();
+        strError = "";
+
+        try
+        {
+            ListaFalta = objGerenciadorService.ObterFalta();
+        }
+        catch (Exception ex)
+        {
+            strError = ex.Message.ToString();
+        }
+
+        ProximaPagina();
+    }
+
+    private void ProximaPagina()
+    {
+        ListaResumida = new List<Falta>();
+        int count = ListaFalta.Count;
+        pagina += 10;
+
+        for (int i = 0; i < ListaFalta.Count && i < pagina; i++)
+        {
+            ListaResumida.Add(ListaFalta[i]);
+        }
+    }
+
+    private void MostrarDetalhes(Falta falta)
+    {
+        objfalta = falta;
+        MostraPopup = true;
+    }
+
+    public void FechaPopup()
+    {
+        // fecha o popup
+        MostraPopup = false;
+        MostraStatusPopup = false;
+        AdicionarStatusPopup = false;
+        Buscarfalta();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Buscarfalta();
+        UsuarioAtual = (await authenticationStateTask).User;
+        var usuario = await _UserManager.FindByEmailAsync(UsuarioAtual.Identity.Name);
+        Usuario = usuario;
+    }
+}

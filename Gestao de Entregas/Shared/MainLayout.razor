@@ -1,0 +1,44 @@
+﻿@inherits LayoutComponentBase
+
+@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+    <Authorized>
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+
+        <div class="main">
+            <div class="top-row px-4 auth">
+                <LoginDisplay />
+                <a href="https://docs.microsoft.com/aspnet/" target="_blank">Sobre nós</a>
+            </div>
+
+            <div class="content px-4">
+                @Body
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div>
+        </div>
+
+        <div class="main">
+            <div class="top-row px-4 auth">
+                <LoginDisplay />
+                <a href="https://docs.microsoft.com/aspnet/" target="_blank">Sobre nós</a>
+            </div>
+
+            <div class="content px-4">
+                <p>
+                    <h2>Você não está logado</h2>
+                </p>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code
+{
+
+}

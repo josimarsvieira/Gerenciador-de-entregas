@@ -1,0 +1,364 @@
+﻿@page "/entregas"
+
+@using Gestao_de_Entregas.Data
+@using Microsoft.AspNetCore.Identity
+@using System.Text
+@using System.Security.Claims
+
+@inject GerenciadorService objGerenciadorService
+@inject UserManager<IdentityUser> _UserManager
+
+<h2>Lista de clientes que solicitaram entregas</h2>
+
+<button class="btn btn-primary" @onclick="(() => AdicionarEntrega())">Adicionar Urgência</button>
+
+@if (ListaEntregasUrgente == null)
+{
+    <p>Carregando...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Remetente</th>
+                <th width="14">Destinatário</th>
+                <th>Nota fiscal</th>
+                <th>Solicitante</th>
+                <th>Marcar como</th>
+                <th>Detalhes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (EntregaUrgente entregas in ListaResumida)
+            {
+                <tr>
+                    <td>@entregas.Remetente</td>
+                    <td>@entregas.Destinatario</td>
+                    <td>@entregas.Nota</td>
+                    <td>@entregas.Solicitante</td>
+                    <td>
+                        @if (entregas.Entregue)
+                        {
+                            <button class="btn btn-primary" disabled>Entregue</button>
+
+                            if (entregas.Urgente)
+                            {
+                                <button class="btn btn-secondary" disabled>Urgente</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary" disabled>Urgente</button>
+                            }
+                        }
+                        else
+                        {
+                            <button class="btn btn-primary" @onclick="(() => MarcarEntregue(entregas))">Entregue</button>
+
+                            if (entregas.Urgente)
+                            {
+                                <button class="btn btn-primary" disabled>Urgente</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary" @onclick="(() => MarcarUrgente(entregas))">Urgente</button>
+                            }
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => MostrarDetalhes(entregas))">...</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<button class="btn btn-primary" @onclick="(() => ProximaPagina())">Mais +</button>
+
+@*---------inicio inclusão de Urgencia---------------------*@
+@if (MostraPopup)
+{
+    <!-- Este popup permite criar uma solicitação de urgencia-->
+    <div class="modal" tabindex="-1" style="display:block" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Solicitar Urgência</h3>
+                    <button type="button" class="close" @onclick="FechaPopup">
+                        <span aria-hidden="true">X</span>
+                    </button>
+                </div>
+                <!-- Edita o formulário para a entrega atual -->
+                <div class="modal-body">
+                    <!-- Somente mostra o ID se não for um novo usuário -->
+                    <p>Informe os dados do cliente</p>
+                    <p>Usuario: @Usuario.UserName</p>
+                    <!-- somnete permite editar se for um novo usuario -->
+                    Remetente:
+                    <input class="form-control" type="text" placeholder="Remetente" @bind="objEntregas.Remetente" />
+                    Destinatário:
+                    <input class="form-control" type="text" placeholder="Destinatário" @bind="objEntregas.Destinatario" />
+                    Nota fiscal:
+                    <input class="form-control" type="number" placeholder="Número da nota" @bind="objEntregas.Nota" />
+                    Solicitante:
+                    <input class="form-control" type="text" placeholder="Solicitante" @bind="objEntregas.Solicitante" />
+                    Observações:
+                    <input class="form-control" type="text" placeholder="Observações" @bind="objEntregas.Observacoes" />
+                    <br />
+
+                    <!-- Botão para salvar o usuário -->
+                    <button class="btn btn-primary" @onclick="SalvaUrgencia">
+                        Salvar
+                    </button>
+                    <br />
+                    <span style="color:red">@strError</span>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (MostraPopupView)
+{
+    <!-- Este popup permite criar uma solicitação de urgencia-->
+    <div class="modal" tabindex="-1" style="display:block" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Dados da Urgência</h3>
+                        <button type="button" class="close" @onclick="FechaPopup">
+                            <span aria-hidden="true">X</span>
+                        </button>
+                    </div>
+                    <!-- Edita o formulário para a entrega atual -->
+                    <div class="modal-body">
+                        Remetente:
+                        <input class="form-control" type="text" disabled @bind="objEntregas.Remetente" />
+                        Destinatário:
+                        <input class="form-control" type="text" disabled @bind="objEntregas.Destinatario" />
+                        Nota fiscal:
+                        <input class="form-control" type="number" disabled @bind="objEntregas.Nota" />
+                        Solicitante:
+                        <input class="form-control" type="text" disabled @bind="objEntregas.Solicitante" />
+                        Observações:
+                        <input class="form-control" type="text" disabled @bind="objEntregas.Observacoes" />
+                        Data:
+                        <input class="form-control" type="datetime" disabled @bind="objEntregas.DataSolicitacao" />
+                        <p>
+                            Incluso por: <input class="form-control" type="datetime" disabled @bind="objEntregas.Usuario.UserName" />
+                        </p>
+
+                        @if (objEntregas.EntregaId != 0)
+                        {
+                            <button class="btn btn-primary" @onclick="(() => BuscarEntregasUrgenteStatus(objEntregas))">
+                                Registros
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (MostraStatusPopup)
+{
+    {
+        <!-- Este popup permite criar uma solicitação de urgencia-->
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Exibindo registros da entrega</h3>
+                            <button type="button" class="close" @onclick="FechaStatusPopup">
+                                <span aria-hidden="true">X</span>
+                            </button>
+                        </div>
+                        <!-- Edita o formulário para a falta atual -->
+                        <div class="modal-body">
+                            <!-- somnete permite editar se for um novo usuario -->
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Data ocorrência</th>
+                                        <th>Ocorrência</th>
+                                        <th>Usúario</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (EntregaUrgenteStatus entregaUrgenteStatus in ListaEntregaUrgenteStatus)
+                                    {
+                                        <tr>
+                                            <td>@entregaUrgenteStatus.DataStatus</td>
+                                            <td>@entregaUrgenteStatus.Observacao</td>
+                                            <td>@entregaUrgenteStatus.Usuario.UserName</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@*---------fim da inclusão de usuários---------------------*@
+
+@code
+{
+    public List<EntregaUrgente> ListaEntregasUrgente;
+    public List<EntregaUrgente> ListaResumida;
+    public List<EntregaUrgenteStatus> ListaEntregaUrgenteStatus;
+
+    public StringBuilder strNotas = new StringBuilder();
+    ClaimsPrincipal UsuarioAtual;
+    IdentityUser Usuario;
+
+    EntregaUrgente objEntregas = new EntregaUrgente();
+    EntregaUrgenteStatus objEntregaUrgenteStatus = new EntregaUrgenteStatus();
+
+    public string strError = "";
+    int pagina;
+
+    // Habilita a exibição do Popup
+    bool MostraPopup = false;
+    bool MostraPopupView = false;
+    bool MostraStatusPopup = false;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private void AdicionarEntrega()
+    {
+        objEntregas = new EntregaUrgente();
+        MostraPopup = true;
+    }
+
+    private void MarcarUrgente(EntregaUrgente entrega)
+    {
+        try
+        {
+            entrega.Urgente = true;
+            objGerenciadorService.AtualizarEntrega(entrega);
+
+            objEntregaUrgenteStatus = new EntregaUrgenteStatus { EntregaUrgente = entrega, DataStatus = DateTime.Now, Usuario = this.Usuario, Observacao = "Entrega foi marcada como urgente" };
+            objGerenciadorService.InserirEntregaUrgenteStatus(objEntregaUrgenteStatus);
+
+        }
+        catch (Exception ex)
+        {
+            strError = ex.Message.ToString();
+        }
+
+        BuscarEntregas();
+    }
+
+    private void MarcarEntregue(EntregaUrgente entrega)
+    {
+        try
+        {
+            entrega.Entregue = true;
+            objGerenciadorService.AtualizarEntrega(entrega);
+
+            objEntregaUrgenteStatus = new EntregaUrgenteStatus { EntregaUrgente = entrega, DataStatus = DateTime.Now, Usuario = this.Usuario, Observacao = "Urgência solicitada" };
+            objGerenciadorService.InserirEntregaUrgenteStatus(objEntregaUrgenteStatus);
+
+        }
+        catch (Exception ex)
+        {
+            strError = ex.Message.ToString();
+        }
+
+        BuscarEntregas();
+
+    }
+
+    private void SalvaUrgencia()
+    {
+        try
+        {
+            objEntregas.Usuario = Usuario;
+            objEntregas.DataSolicitacao = DateTime.Now;
+            objGerenciadorService.AtualizarEntrega(objEntregas);
+
+            objEntregaUrgenteStatus = new EntregaUrgenteStatus { EntregaUrgente = objEntregas, DataStatus = DateTime.Now, Usuario = this.Usuario, Observacao = "Solicitação de entrega registrada" };
+            objGerenciadorService.InserirEntregaUrgenteStatus(objEntregaUrgenteStatus);
+
+            MostraPopup = false;
+        }
+        catch (Exception ex)
+        {
+            strError = ex.Message.ToString();
+        }
+
+        BuscarEntregas();
+
+    }
+
+    private void BuscarEntregasUrgenteStatus(EntregaUrgente entrega)
+    {
+        ListaEntregaUrgenteStatus = objGerenciadorService.ObterEntregaUrgenteStatus(entrega);
+        MostraStatusPopup = true;
+    }
+
+    private void FechaStatusPopup()
+    {
+        MostraStatusPopup = false;
+    }
+
+    private void BuscarEntregas()
+    {
+        pagina = 0;
+        ListaEntregasUrgente = new List<EntregaUrgente>();
+        strError = "";
+
+        try
+        {
+            ListaEntregasUrgente = objGerenciadorService.ObterEntregas();
+        }
+        catch (Exception ex)
+        {
+            strError = ex.Message.ToString();
+        }
+
+        ProximaPagina();
+    }
+
+    private void ProximaPagina()
+    {
+        ListaResumida = new List<EntregaUrgente>();
+        int count = ListaEntregasUrgente.Count;
+        pagina += 10;
+
+        for (int i = 0; i < ListaEntregasUrgente.Count && i < pagina; i++)
+        {
+            ListaResumida.Add(ListaEntregasUrgente[i]);
+        }
+    }
+
+    private void MostrarDetalhes(EntregaUrgente entrega)
+    {
+        objEntregas = entrega;
+        MostraPopupView = true;
+    }
+
+    public void FechaPopup()
+    {
+        // fecha o popup
+        MostraPopup = false;
+        MostraPopupView = false;
+        BuscarEntregas();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        BuscarEntregas();
+        UsuarioAtual = (await authenticationStateTask).User;
+        var usuario = await _UserManager.FindByEmailAsync(UsuarioAtual.Identity.Name);
+        Usuario = usuario;
+    }
+}
