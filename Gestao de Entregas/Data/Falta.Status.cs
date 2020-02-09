@@ -19,6 +19,6 @@ namespace Gestao_de_Entregas.Data
         public DateTime DataStatus { get; set; }
 
         [Required]
-        public IdentityUser Usuario { get; set; }
+        public ApplicationUser Usuario { get; set; }
     }
 }

@@ -6,7 +6,7 @@
 @using System.Security.Claims
 
 @inject GerenciadorService objGerenciadorService
-@inject UserManager<IdentityUser> _UserManager
+@inject UserManager<ApplicationUser> _UserManager
 
 <h2>Lista de clientes que solicitaram entregas</h2>
 
@@ -216,7 +216,7 @@ else
 
     public StringBuilder strNotas = new StringBuilder();
     ClaimsPrincipal UsuarioAtual;
-    IdentityUser Usuario;
+    ApplicationUser Usuario;
 
     EntregaUrgente objEntregas = new EntregaUrgente();
     EntregaUrgenteStatus objEntregaUrgenteStatus = new EntregaUrgenteStatus();

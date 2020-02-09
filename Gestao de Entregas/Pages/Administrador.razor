@@ -3,7 +3,9 @@
 
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Identity;
-@inject UserManager<IdentityUser> _UserManager
+@using Gestao_de_Entregas.Data;
+
+@inject UserManager<ApplicationUser> _UserManager
 @inject RoleManager<IdentityRole> _RoleManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
@@ -115,13 +117,13 @@
 @code {
 
     // Propriedade usada para adicionar ou editar o usuário atual
-    IdentityUser objUser = new IdentityUser();
+    ApplicationUser objUser = new ApplicationUser();
 
     // Obtem a role selecionada para o usuário atual
     string CurrentUserRole { get; set; } = "User";
 
     // Coleção para exibir os usuários existentes
-    List<IdentityUser> ColUsers = new List<IdentityUser>();
+    List<ApplicationUser> ColUsers = new List<ApplicationUser>();
 
     // Opções para exibir as roles na lista suspensa quando editar um usuário
     List<string> Options = new List<string>() { "User", "Admin" };
@@ -135,7 +137,7 @@
     void AdicionaNovoUser()
     {
         // cria um novo usuário
-        objUser = new IdentityUser();
+        objUser = new ApplicationUser();
         objUser.PasswordHash = "*****";
         // Definie o id como vazio
         objUser.Id = "";
@@ -200,7 +202,7 @@
             else
             {
                 // Insere um novo user
-                var NewUser = new IdentityUser
+                var NewUser = new ApplicationUser
                 {
                     UserName = objUser.UserName,
                     Email = objUser.Email
@@ -243,10 +245,10 @@
         }
     }
 
-    async Task EditaUser(IdentityUser _IdentityUser)
+    async Task EditaUser(ApplicationUser _ApplicationUser)
     {
         // Define o usuario selecionado como o atual
-        objUser = _IdentityUser;
+        objUser = _ApplicationUser;
         // Obtem o usuario
         var user = await _UserManager.FindByIdAsync(objUser.Id);
 
@@ -294,9 +296,9 @@
         // limpa mensasgens de erro
         strError = "";
         // define a coleção para tratar os usuários
-        ColUsers = new List<IdentityUser>();
+        ColUsers = new List<ApplicationUser>();
         // Obtem os usuários a partir de _UserManager
-        var user = _UserManager.Users.Select(x => new IdentityUser
+        var user = _UserManager.Users.Select(x => new ApplicationUser
         {
             Id = x.Id,
             UserName = x.UserName,

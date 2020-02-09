@@ -28,7 +28,7 @@ namespace Gestao_de_Entregas.Data
         public bool Encontrado { get; set; }
 
         [Required]
-        public IdentityUser Usuario { get; set; }
+        public ApplicationUser Usuario { get; set; }
 
         [Required]
         public DateTime DataFalta { get; set; }

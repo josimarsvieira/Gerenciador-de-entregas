@@ -19,7 +19,7 @@ namespace Gestao_de_Entregas.Data
         public string Observacao { get; set; }
 
         [Required]
-        public IdentityUser Usuario { get; set; }
+        public ApplicationUser Usuario { get; set; }
 
         [Required]
         public DateTime DataStatus { get; set; }

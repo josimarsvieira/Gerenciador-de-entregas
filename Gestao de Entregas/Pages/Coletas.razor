@@ -6,7 +6,7 @@
 @using System.Security.Claims
 
 @inject GerenciadorService objGerenciadorService
-@inject UserManager<IdentityUser> _UserManager
+@inject UserManager<ApplicationUser> _UserManager
 
 <h2>Lista de clientes que solicitaram coleta</h2>
 
@@ -171,7 +171,7 @@ else
     public List<ColetaStatus> ListaColetaStatus;
 
     ClaimsPrincipal UsuarioAtual;
-    IdentityUser Usuario;
+    ApplicationUser Usuario;
 
     Coleta objcoleta = new Coleta();
     ColetaStatus objColetaStatus = new ColetaStatus();

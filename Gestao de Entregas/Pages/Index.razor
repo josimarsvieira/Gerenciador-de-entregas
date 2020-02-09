@@ -91,19 +91,32 @@
             <div class="card-header">Últimas solicitações de coletas</div>
             <div class="card-body">
                 <div class="card-text">
-                    <table class="d-xl-table-row">
+                    <table class="d-sm-table-row">
                         <thead>
                             <tr>
-                                <th>Cliente</th>
+                                <th>Nome do Cliente</th>
                                 <th>Data da coleta</th>
+                                <th>Situação</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (Coleta coleta in coletas)
                             {
                                 <tr>
-                                    <td>@coleta.NomeCliente</td>
-                                    <td align="right">@coleta.DataColeta.ToString("dd/MM/yyyy")</td>
+                                    <td class="table-mobile-nome">@coleta.NomeCliente</td>
+                                    <td class="table-mobile">@coleta.DataColeta.ToString("dd/MM/yyyy")</td>
+                                    @if (coleta.Coletado)
+                                    {
+                                        <td class="table-mobile">Coletado</td>
+                                    }
+                                    else if (coleta.Cancelado)
+                                    {
+                                        <td class="table-mobile">Cancelado</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="table-mobile">Não coletado</td>
+                                    }
                                 </tr>
                             }
                         </tbody>
@@ -120,16 +133,29 @@
                     <table class="d-xl-table-row">
                         <thead>
                             <tr>
-                                <th>Cliente</th>
+                                <th>Nome do Cliente</th>
                                 <th>Data da solicitação</th>
+                                <th>Situação</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (EntregaUrgente entrega in entregaUrgentes)
                             {
                                 <tr>
-                                    <td>@entrega.Destinatario</td>
-                                    <td align="right">@entrega.DataSolicitacao.ToString("dd/MM/yyyy")</td>
+                                    <td class="table-mobile-nome">@entrega.Destinatario</td>
+                                    <td class="table-mobile">@entrega.DataSolicitacao.ToString("dd/MM/yyyy")</td>
+                                    @if (entrega.Entregue)
+                                    {
+                                        <td class="table-mobile">Entregue</td>
+                                    }
+                                    else if (entrega.Urgente)
+                                    {
+                                        <td class="table-mobile">Urgente</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="table-mobile">Não entregue</td>
+                                    }
                                 </tr>
                             }
                         </tbody>

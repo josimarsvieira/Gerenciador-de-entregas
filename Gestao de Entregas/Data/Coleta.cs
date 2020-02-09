@@ -34,7 +34,7 @@ namespace Gestao_de_Entregas.Data
         public string Observacoes { get; set; }
 
         [Required]
-        public IdentityUser Usuario { get; set; }
+        public ApplicationUser Usuario { get; set; }
 
         public Coleta()
         {

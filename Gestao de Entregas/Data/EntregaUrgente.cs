@@ -24,7 +24,7 @@ namespace Gestao_de_Entregas.Data
         public bool Entregue { get; set; }
 
         [Required]
-        public IdentityUser Usuario { get; set; }
+        public ApplicationUser Usuario { get; set; }
 
         public string Observacoes { get; set; }
 
