@@ -57,7 +57,17 @@ namespace Gestao_de_Entregas
                 options.User.RequireUniqueEmail = true;
             }
             );
-            services.AddRazorPages();
+            services.AddRazorPages()
+                .AddRazorPagesOptions(options =>
+                {
+                    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Register", "Admin");
+                });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+            });
+
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
             services.AddTransient<GerenciadorService>();

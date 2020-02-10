@@ -24,7 +24,7 @@
         {
             <tr>
                 <td>@user.Id.Substring(0, 5) ...</td>
-                <td>@user.UserName</td>
+                <td>@user.Name</td>
                 <td>@user.Email</td>
                 <td>
                     <button class="btn btn-primary"
@@ -59,14 +59,25 @@
                     <!-- somnete permite editar se for um novo usuario -->
                     @if (objUser.Id != "")
                     {
-                        <p>@objUser.UserName</p>
+                        <p>@objUser.Name</p>
                     }
                     else
                     {
-                        <input class="form-control" type="text" placeholder="Nome" @bind="objUser.UserName" />
+                        <input class="form-control" type="text" placeholder="Nome" @bind="objUser.Name" />
                     }
                     <input class="form-control" type="text" placeholder="Email" @bind="objUser.Email" />
+                    <input class="form-control" type="text" placeholder="Cargo" @bind="objUser.Cargo" />
                     <input class="form-control" type="password" placeholder="Password" @bind="objUser.PasswordHash" />
+
+                    <select class="form-control" @bind="@objUser.Filial">
+                        @foreach (var filial in Filiais)
+                        {
+                            <option value="@filial">
+                                @filial
+                            </option>
+                        }
+                    </select>
+
                     <select class="form-control" @bind="@CurrentUserRole">
                         @foreach (var option in Options)
                         {
@@ -128,6 +139,8 @@
     // Opções para exibir as roles na lista suspensa quando editar um usuário
     List<string> Options = new List<string>() { "User", "Admin" };
 
+    List<string> Filiais = new List<string>() { "Matriz", "Curitiba", "Ubá", "Rio de Janeiro", "Arapongas", "Linhares", "São bento do sul" };
+
     // Trata erros
     string strError = "";
 
@@ -156,6 +169,7 @@
                 var user = await _UserManager.FindByIdAsync(objUser.Id);
                 // atualiza Email
                 user.Email = objUser.Email;
+                user.UserName = objUser.Email;
                 // atualiza o usuário
                 await _UserManager.UpdateAsync(user);
                 // somente atualiza a senha se o o valor atual
@@ -204,7 +218,10 @@
                 // Insere um novo user
                 var NewUser = new ApplicationUser
                 {
-                    UserName = objUser.UserName,
+                    Name = objUser.Name,
+                    Cargo = objUser.Cargo,
+                    Filial = objUser.Filial,
+                    UserName = objUser.Email,
                     Email = objUser.Email
                 };
 
@@ -301,6 +318,9 @@
         var user = _UserManager.Users.Select(x => new ApplicationUser
         {
             Id = x.Id,
+            Name = x.Name,
+            Cargo = x.Cargo,
+            Filial = x.Filial,
             UserName = x.UserName,
             Email = x.Email,
             PasswordHash = "*****"

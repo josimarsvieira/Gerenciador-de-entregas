@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 @inject NavigationManager NavigationManager
+@using Gestao_de_Entregas.Areas.Identity.Pages
 
 <AuthorizeView>
     <Authorized>
@@ -20,21 +21,7 @@
         </div>
     </Authorized>
     <NotAuthorized>
-        <div>
-        </div>
-
-        <div class="main">
-            <div class="top-row px-4 auth">
-                <LoginDisplay />
-                <a href="https://docs.microsoft.com/aspnet/" target="_blank">Sobre nós</a>
-            </div>
-
-            <div class="content px-4">
-                <p>
-                    <h2>Você não está logado</h2>
-                </p>
-            </div>
-        </div>
+        <Gestao_de_Entregas.Data.RedirectToLogin />
     </NotAuthorized>
 </AuthorizeView>
 

@@ -11,14 +11,15 @@
 <h2>Lista de clientes que solicitaram coleta</h2>
 
 <button class="btn btn-primary" @onclick="(() => AdicionarColeta())">Adicionar Coleta</button>
-
+<br />
+<br />
 @if (ListaColeta == null)
 {
     <p>Carregando...</p>
 }
 else
 {
-    <table class="table">
+    <table class="table table-sm">
         <thead>
             <tr>
                 <th>Número</th>
@@ -36,9 +37,9 @@ else
                 <tr>
                     <td>@coleta.ColetaId</td>
                     <td>@coleta.NomeCliente</td>
-                    <td>@coleta.DataColeta</td>
+                    <td>@coleta.DataColeta.ToString("dd/MM/yyyy HH:mm")</td>
                     <td>@coleta.Solicitante</td>
-                    <td>@coleta.DataSolicitacao</td>
+                    <td>@coleta.DataSolicitacao.ToString("dd/MM/yyyy")</td>
                     <td>
                         @if (coleta.Coletado)
                         {
@@ -102,9 +103,12 @@ else
 
                     <br />
                     <!-- Botão para salvar o usuário -->
-                    <button class="btn btn-primary" @onclick="SalvaColeta">
-                        Salvar
-                    </button>
+                    @if (!objcoleta.Coletado && !objcoleta.Cancelado)
+                    {
+                        <button class="btn btn-primary" @onclick="SalvaColeta">
+                            Salvar
+                        </button>
+                    }
 
                     @if (objcoleta.ColetaId != 0)
                     {
@@ -151,7 +155,7 @@ else
                                         <tr>
                                             <td>@coletaStatus.DataStatus</td>
                                             <td>@coletaStatus.Observacao</td>
-                                            <td>@coletaStatus.Usuario.UserName</td>
+                                            <td>@coletaStatus.Usuario.Name</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -217,7 +221,7 @@ else
             coleta.Coletado = true;
             objGerenciadorService.AtualizarColeta(coleta);
 
-            objColetaStatus = new ColetaStatus { Coleta = coleta, DataStatus = DateTime.Now, Usuario = this.Usuario, Observacao = "Coleta Realizada" };
+            objColetaStatus = new ColetaStatus { Coleta = coleta, DataStatus = DateTime.Now, Usuario = this.Usuario, Observacao = "Coleta foi Realizada" };
             objGerenciadorService.InserirColetaStatus(objColetaStatus);
         }
         catch (Exception ex)
@@ -287,7 +291,7 @@ else
     {
         ListaResumida = new List<Coleta>();
         int count = ListaColeta.Count;
-        pagina += 10;
+        pagina += 8;
 
         for (int i = 0; i < ListaColeta.Count && i < pagina; i++)
         {

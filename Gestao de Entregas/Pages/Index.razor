@@ -1,6 +1,8 @@
 ﻿@page "/"
 
 @using Gestao_de_Entregas.Data
+@using Microsoft.AspNetCore.Identity
+
 @inject GerenciadorService objGerenciadorService
 @inject NavigationManager NavigationManager
 
@@ -173,6 +175,9 @@
     SortedList<string, int> EstatisticasFaltas;
     List<Coleta> coletas;
     List<EntregaUrgente> entregaUrgentes;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
 
     private void BuscarColetas()
     {

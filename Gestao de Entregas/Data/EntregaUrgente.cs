@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Gestao_de_Entregas.Data

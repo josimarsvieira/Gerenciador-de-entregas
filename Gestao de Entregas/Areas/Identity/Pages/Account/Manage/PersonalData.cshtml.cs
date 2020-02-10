@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Gestao_de_Entregas.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using Gestao_de_Entregas.Data;
 
 namespace Gestao_de_Entregas.Areas.Identity.Pages.Account.Manage
 {

@@ -11,6 +11,8 @@
 <h2>Lista de clientes que solicitaram entregas</h2>
 
 <button class="btn btn-primary" @onclick="(() => AdicionarEntrega())">Adicionar Urgência</button>
+<br />
+<br />
 
 @if (ListaEntregasUrgente == null)
 {
@@ -18,11 +20,11 @@
 }
 else
 {
-    <table class="table">
+    <table class="table table-sm">
         <thead>
             <tr>
                 <th>Remetente</th>
-                <th width="14">Destinatário</th>
+                <th>Destinatário</th>
                 <th>Nota fiscal</th>
                 <th>Solicitante</th>
                 <th>Marcar como</th>
@@ -93,7 +95,7 @@ else
                 <div class="modal-body">
                     <!-- Somente mostra o ID se não for um novo usuário -->
                     <p>Informe os dados do cliente</p>
-                    <p>Usuario: @Usuario.UserName</p>
+                    <p>Usuario: @Usuario.Name</p>
                     <!-- somnete permite editar se for um novo usuario -->
                     Remetente:
                     <input class="form-control" type="text" placeholder="Remetente" @bind="objEntregas.Remetente" />
@@ -146,7 +148,7 @@ else
                         Data:
                         <input class="form-control" type="datetime" disabled @bind="objEntregas.DataSolicitacao" />
                         <p>
-                            Incluso por: <input class="form-control" type="datetime" disabled @bind="objEntregas.Usuario.UserName" />
+                            Incluso por: <input class="form-control" type="datetime" disabled @bind="objEntregas.Usuario.Name" />
                         </p>
 
                         @if (objEntregas.EntregaId != 0)
@@ -193,7 +195,7 @@ else
                                         <tr>
                                             <td>@entregaUrgenteStatus.DataStatus</td>
                                             <td>@entregaUrgenteStatus.Observacao</td>
-                                            <td>@entregaUrgenteStatus.Usuario.UserName</td>
+                                            <td>@entregaUrgenteStatus.Usuario.Name</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -332,7 +334,7 @@ else
     {
         ListaResumida = new List<EntregaUrgente>();
         int count = ListaEntregasUrgente.Count;
-        pagina += 10;
+        pagina += 8;
 
         for (int i = 0; i < ListaEntregasUrgente.Count && i < pagina; i++)
         {

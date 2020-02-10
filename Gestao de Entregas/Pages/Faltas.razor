@@ -11,6 +11,8 @@
 <h2>Lista de faltas</h2>
 
 <button class="btn btn-primary" @onclick="(() => AdicionarFalta())">Adicionar Falta</button>
+<br />
+<br />
 
 @if (ListaFalta == null)
 {
@@ -18,15 +20,15 @@
 }
 else
 {
-    <table class="table">
+    <table class="table table-sm">
         <thead>
             <tr>
-                <th width="14">Remetente</th>
+                <th>Remetente</th>
                 <th>Data da falta</th>
-                <th width="11">Nota fiscal</th>
-                <th width="8">Conhecimento</th>
+                <th>Nota fiscal</th>
+                <th>Conhecimento</th>
                 <th>Volumes faltantes</th>
-                <th>Status</th>
+                <th>Situação</th>
                 <th>Detalhes</th>
             </tr>
         </thead>
@@ -41,16 +43,13 @@ else
                     <td>@falta.VolumesFaltante</td>
                     <td>
 
-                        @if (falta.Encontrado)
+                        @if (!falta.Encontrado)
                         {
                             <button class="btn btn-primary" disabled>Adicionar</button>
-                            <button class="btn btn-primary" @onclick="(() => MostrarStatus(falta))">Mostrar</button>
-
                         }
                         else
                         {
                             <button class="btn btn-primary" @onclick="(() => AdicionarStatus(falta))">Adicionar</button>
-                            <button class="btn btn-primary" @onclick="(() => MostrarStatus(falta))">Mostrar</button>
                         }
                     </td>
                     <td>
@@ -72,34 +71,35 @@ else
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Adicionar falta</h3>
+                    <h3 class="modal-title">Detalhes da falta</h3>
                     <button type="button" class="close" @onclick="FechaPopup">
                         <span aria-hidden="true">X</span>
                     </button>
                 </div>
                 <!-- Edita o formulário para a falta atual -->
                 <div class="modal-body">
-                    <!-- Somente mostra o ID se não for um novo usuário -->
-                    <p>Informe os dados da falta</p>
-                    <p>Usuario: @Usuario.UserName</p>
-                    <!-- somnete permite editar se for um novo usuario -->
-                    <input class="form-control" type="text" placeholder="Remetente" @bind="objfalta.Remetente" />
-                    <input class="form-control" type="datetime" placeholder="Destinatario" @bind="objfalta.Destinatario" />
-                    <b>Número da nota: <input class="form-control" type="number" placeholder="Número da Nota" @bind="objfalta.NumeroNota" /></b>
+
+                    Remetente: <input class="form-control" type="text" placeholder="Remetente" @bind="objfalta.Remetente" />
+                    Destinatario: <input class="form-control" type="datetime" placeholder="Destinatario" @bind="objfalta.Destinatario" />
+                    Número da nota: <input class="form-control" type="number" placeholder="Número da Nota" @bind="objfalta.NumeroNota" />
                     Número do CTE: <input class="form-control" type="number" placeholder="Número do CTE" @bind="objfalta.NumeroCTE" />
                     Volumes faltantes: <input class="form-control" type="number" placeholder="Volumes Faltantes" @bind="objfalta.VolumesFaltante" />
+
+                    <br />
                     @if (objfalta.Usuario != null)
                     {
-                        <b>Incluida por: @objfalta.Usuario.UserName</b>
+                        <p>Incluida por: @objfalta.Usuario.Name</p>
                     }
 
-                    <br /><br />
+                    <br />
+
+                    <button class="btn btn-primary" @onclick="(() => MostrarStatus(objfalta))">Registros</button>
 
                     <!-- Botão para salvar o usuário -->
-                    <button class="btn btn-primary" @onclick="Salvafalta">
-                        Salvar
-                    </button>
-
+                    @if (objfalta.Encontrado)
+                    {
+                        <button class="btn btn-primary" @onclick="Salvafalta">Salvar</button>
+                    }
                     <br />
                     <span style="color:red">@strError</span>
                 </div>
@@ -125,27 +125,14 @@ else
                     <div class="modal-body">
                         <!-- Somente mostra o ID se não for um novo usuário -->
                         <p>Informe a situação da falta</p>
-                        <p>Usuario: @Usuario.UserName</p>
+                        <p>Usuario: @Usuario.Name</p>
                         <!-- somnete permite editar se for um novo usuario -->
-                        <InputTextArea @bind-Value="objStatus.Observacao" />
-                        <input class="form-control" type="text" placeholder="Situação atual" @bind="objStatus.Observacao" />
+                        <textarea class="form-control" rows="5" @bind="objStatus.Observacao" />
                         <br /><br />
 
-                        @if (objfalta.Encontrado)
-                        {
+                        <button class="btn btn-primary" @onclick="SalvaStatus">Salvar</button>
 
-                            <button class="btn btn-primary" disabled>Encontrado</button>
-                        }
-                        else
-                        {
-                            <button class="btn btn-primary" @onclick="(() => MarcarEncontrado(objfalta))">Encontrado</button>
-
-                        }
-
-                        <!-- Botão para salvar o usuário -->
-                        <button class="btn btn-primary" @onclick="SalvaStatus">
-                            Salvar
-                        </button>
+                        <button class="btn btn-primary" @onclick="(() => MarcarEncontrado(objfalta))">Encontrado</button>
 
                         <br />
                         <span style="color:red">@strError</span>
@@ -166,7 +153,7 @@ else
                     <div class="modal-content">
                         <div class="modal-header">
                             <h3 class="modal-title">Exibindo registros da falta</h3>
-                            <button type="button" class="close" @onclick="FechaPopup">
+                            <button type="button" class="close" @onclick="FechaStatusPopup">
                                 <span aria-hidden="true">X</span>
                             </button>
                         </div>
@@ -187,7 +174,7 @@ else
                                         <tr>
                                             <td>@faltaStatus.DataStatus</td>
                                             <td>@faltaStatus.Observacao</td>
-                                            <td>@faltaStatus.Usuario.UserName</td>
+                                            <td>@faltaStatus.Usuario.Name</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -275,9 +262,19 @@ else
         {
             objfalta.Usuario = Usuario;
             objfalta.DataFalta = DateTime.Now;
-            objGerenciadorService.AtualizarFalta(objfalta);
+            FaltaStatus StatusNovo;
 
-            FaltaStatus StatusNovo = new FaltaStatus { DataStatus = DateTime.Now, Falta = objfalta, Observacao = "Falta registrada", Usuario = this.Usuario };
+            if (objfalta.FaltaId == 0)
+            {
+                StatusNovo = new FaltaStatus { DataStatus = DateTime.Now, Falta = objfalta, Observacao = "Falta registrada", Usuario = this.Usuario };
+
+            }
+            else
+            {
+                StatusNovo = new FaltaStatus { DataStatus = DateTime.Now, Falta = objfalta, Observacao = "Falta modificada", Usuario = this.Usuario };
+            }
+
+            objGerenciadorService.AtualizarFalta(objfalta);
             objGerenciadorService.InserirFaltaStatus(StatusNovo);
             MostraPopup = false;
         }
@@ -329,7 +326,7 @@ else
     {
         ListaResumida = new List<Falta>();
         int count = ListaFalta.Count;
-        pagina += 10;
+        pagina += 8;
 
         for (int i = 0; i < ListaFalta.Count && i < pagina; i++)
         {
@@ -350,6 +347,11 @@ else
         MostraStatusPopup = false;
         AdicionarStatusPopup = false;
         Buscarfalta();
+    }
+
+    public void FechaStatusPopup()
+    {
+        MostraStatusPopup = false;
     }
 
     protected override async Task OnInitializedAsync()

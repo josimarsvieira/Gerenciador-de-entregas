@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Gestao_de_Entregas.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using System.Threading.Tasks;
-using Gestao_de_Entregas.Data;
 
 namespace Gestao_de_Entregas.Areas.Identity.Pages.Account
 {
