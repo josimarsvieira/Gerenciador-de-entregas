@@ -29,6 +29,8 @@ namespace Gestao_de_Entregas.Data
 
         public bool Urgente { get; set; }
 
+        public bool Retira { get; set; }
+
         [Required]
         public int Nota { get; set; }
 

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\josim\\source\\Gerenciador de entregas\\Gestao de Entregas\\Gestao de Entregas.csproj": {}
+    "C:\\Users\\josim\\source\\Gerenciador de Entregas\\Gestao de Entregas\\Gestao de Entregas.csproj": {}
   },
   "projects": {
-    "C:\\Users\\josim\\source\\Gerenciador de entregas\\Gestao de Entregas\\Gestao de Entregas.csproj": {
+    "C:\\Users\\josim\\source\\Gerenciador de Entregas\\Gestao de Entregas\\Gestao de Entregas.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\josim\\source\\Gerenciador de entregas\\Gestao de Entregas\\Gestao de Entregas.csproj",
+        "projectUniqueName": "C:\\Users\\josim\\source\\Gerenciador de Entregas\\Gestao de Entregas\\Gestao de Entregas.csproj",
         "projectName": "Gestao de Entregas",
-        "projectPath": "C:\\Users\\josim\\source\\Gerenciador de entregas\\Gestao de Entregas\\Gestao de Entregas.csproj",
+        "projectPath": "C:\\Users\\josim\\source\\Gerenciador de Entregas\\Gestao de Entregas\\Gestao de Entregas.csproj",
         "packagesPath": "C:\\Users\\josim\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\josim\\source\\Gerenciador de entregas\\Gestao de Entregas\\obj\\",
+        "outputPath": "C:\\Users\\josim\\source\\Gerenciador de Entregas\\Gestao de Entregas\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\",

@@ -26,7 +26,9 @@ else
                 <th>Remetente</th>
                 <th>Data da coleta</th>
                 <th>Solicitante</th>
-                <th>Data da solicitação</th>
+                <th>Vol</th>
+                <th>Mts Cub</th>
+                <th>Peso</th>
                 <th>Marcar como</th>
                 <th>Detalhes</th>
             </tr>
@@ -39,7 +41,9 @@ else
                     <td>@coleta.NomeCliente</td>
                     <td>@coleta.DataColeta.ToString("dd/MM/yyyy HH:mm")</td>
                     <td>@coleta.Solicitante</td>
-                    <td>@coleta.DataSolicitacao.ToString("dd/MM/yyyy")</td>
+                    <td>@coleta.Volumes</td>
+                    <td>@coleta.Metragem m³</td>
+                    <td>@coleta.Peso kg</td>
                     <td>
                         @if (coleta.Coletado)
                         {

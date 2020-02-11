@@ -214,8 +214,18 @@ namespace Gestao_de_Entregas.Data
             int total = _db.EntregaUrgente.Count();
             int entregues = _db.EntregaUrgente.Where(en => en.Entregue == true).Count();
             int naoEntregues = _db.EntregaUrgente.Where(en => en.Entregue == false).Count();
-            int entreguesNoPrazo = _db.EntregaUrgente.Where(en => en.DataSolicitacao < en.DataSolicitacao.AddDays(2)).Count();
-            int naoEntreguesNoPrazo = _db.EntregaUrgente.Where(en => en.DataSolicitacao > en.DataSolicitacao.AddDays(2)).Count();
+            int entreguesNoPrazo = _db.EntregaUrgente
+                .Where(en => en.DataSolicitacao <
+                _db.EntregaUrgenteStatus.Where(eus => eus.EntregaUrgente.Equals(en))
+                .Where(eus => eus.Observacao.Equals("Entrega foi concluída"))
+                .Select(eus => eus.DataStatus).FirstOrDefault().AddDays(2))
+                .Count();
+            int naoEntreguesNoPrazo = _db.EntregaUrgente
+                .Where(en => en.DataSolicitacao.AddDays(2) <
+                _db.EntregaUrgenteStatus.Where(eus => eus.EntregaUrgente.Equals(en))
+                .Where(eus => eus.Observacao.Equals("Entrega foi concluída"))
+                .Select(eus => eus.DataStatus).FirstOrDefault())
+                .Count();
 
             estatisticas.Add("Total:", total);
             estatisticas.Add("Entregues:", entregues);
@@ -230,14 +240,24 @@ namespace Gestao_de_Entregas.Data
             SortedList<string, int> estatisticas = new SortedList<string, int>();
 
             int total = _db.Coleta.Count();
-            int coletas = _db.Coleta.Where(cl => cl.Coletado == true).Count();
-            int naoColetados = _db.Coleta.Where(cl => cl.Coletado == false).Count();
-            int coletadosNoPrazo = _db.Coleta.Where(cl => cl.DataSolicitacao <= cl.DataColeta).Count();
-            int naoColetadosNoPrazo = _db.Coleta.Where(cl => cl.DataSolicitacao > cl.DataColeta).Count();
+            int coletados = _db.Coleta.Where(cl => cl.Coletado == true).Count();
+            int naoColetados = _db.Coleta.Where(cl => cl.Coletado == false && cl.Cancelado == false).Count();
+            int coletadosNoPrazo = _db.Coleta
+                .Where(cl => cl.DataColeta >=
+                _db.ColetaStatus.Where(fs => fs.Coleta.Equals(cl))
+                .Where(fs => fs.Observacao.Equals("Coleta foi Realizada"))
+                .Select(fs => fs.DataStatus).FirstOrDefault())
+                .Count();
+            int naoColetadosNoPrazo = _db.Coleta
+                .Where(cl => cl.DataColeta <=
+                _db.ColetaStatus.Where(fs => fs.Coleta.Equals(cl))
+                .Where(fs => fs.Observacao.Equals("Coleta foi Realizada"))
+                .Select(fs => fs.DataStatus).FirstOrDefault())
+                .Count();
 
             estatisticas.Add("Total:", total);
-            estatisticas.Add("Coletas:", naoColetados);
-            estatisticas.Add("Não Coletados:", coletadosNoPrazo);
+            estatisticas.Add("Coletados:", coletados);
+            estatisticas.Add("Não Coletados:", naoColetados);
             estatisticas.Add("Coletados no Prazo:", coletadosNoPrazo);
             estatisticas.Add("Não Coletados no Prazo:", naoColetadosNoPrazo);
             return estatisticas;

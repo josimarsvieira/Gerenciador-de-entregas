@@ -43,7 +43,7 @@ else
                     <td>@falta.VolumesFaltante</td>
                     <td>
 
-                        @if (!falta.Encontrado)
+                        @if (falta.Encontrado)
                         {
                             <button class="btn btn-primary" disabled>Adicionar</button>
                         }
@@ -93,13 +93,14 @@ else
 
                     <br />
 
-                    <button class="btn btn-primary" @onclick="(() => MostrarStatus(objfalta))">Registros</button>
-
                     <!-- Botão para salvar o usuário -->
-                    @if (objfalta.Encontrado)
+                    @if (!objfalta.Encontrado)
                     {
                         <button class="btn btn-primary" @onclick="Salvafalta">Salvar</button>
                     }
+
+                    <button class="btn btn-primary" @onclick="(() => MostrarStatus(objfalta))">Registros</button>
+
                     <br />
                     <span style="color:red">@strError</span>
                 </div>
