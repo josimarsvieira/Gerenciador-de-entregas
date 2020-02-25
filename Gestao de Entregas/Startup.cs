@@ -28,6 +28,11 @@ namespace Gestao_de_Entregas
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(
                     Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDbContext<CalculadorDbContext>(options =>
+                options.UseMySql(
+                Configuration.GetConnectionString("CalculadorConnection")));
+
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -71,6 +76,7 @@ namespace Gestao_de_Entregas
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
             services.AddTransient<GerenciadorService>();
+            services.AddTransient<CalculadorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

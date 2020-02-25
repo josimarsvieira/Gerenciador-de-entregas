@@ -1,0 +1,324 @@
+﻿@page "/horasextras"
+
+@using Gestao_de_Entregas.Data
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+
+@inject CalculadorService objDabaseContext
+@inject UserManager<ApplicationUser> _UserManager
+
+<h2>Horas Extras</h2>
+
+<br />
+
+<AuthorizeView Roles="User">
+    @if (objFuncionario == null)
+    {
+        <p>Seu usúario não está vinculado a uma conta de funcionário.</p>
+    }
+    else
+    {
+        <h4>Olá @Usuario.Name, você tem @BuscaBancoDeHoras() horas extras!!!</h4>
+        <br />
+
+    }
+</AuthorizeView>
+
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>Funcionario</th>
+            <th>Mês</th>
+            <th>Ano</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            @if (objFuncionarios != null)
+            {
+                <AuthorizeView Roles="Admin">
+                    <td>
+                        <select class="form-control" @bind="@_idFuncionario">
+                            @foreach (Funcionario func in objFuncionarios)
+                            {
+                                <option value="@func.Id">
+                                    @func.Nome
+                                </option>
+                            }
+                        </select>
+                    </td>
+                </AuthorizeView>
+                <AuthorizeView Roles="User">
+                    <td>
+                        <input class="form-control" disabled @bind="objFuncionario.Nome" />
+                    </td>
+                </AuthorizeView>
+                <td>
+                    <select class="form-control" @bind="@_mes">
+                        @foreach (int mes in Mes)
+                        {
+                            <option value="@mes">
+                                @mes
+                            </option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" @bind="@_ano">
+                        @foreach (int ano in Ano)
+                        {
+                            <option value="@ano">
+                                @ano
+                            </option>
+                        }
+                    </select>
+                </td>
+                <AuthorizeView Roles="Admin">
+                    <td>
+                        <button class="btn btn-primary" @onclick="BuscaHorasFuncionario">Buscar</button>
+                    </td>
+                </AuthorizeView>
+                <AuthorizeView Roles="User">
+                    <td>
+                        <button class="btn btn-primary" @onclick="BuscaHorasFuncionarioFiltrado">Buscar</button>
+                    </td>
+                </AuthorizeView>
+            }
+        </tr>
+    </tbody>
+</table>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card mb-6">
+            <div class="card-header">Horas extras de @MesExtenso(selecionada.Month) foi @TotalHorasExtenso(totalHoras)</div>
+            <div class="card-body">
+                <p class="card-text">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Entrada</th>
+                                <th>Saida</th>
+                                <th>Extras</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (objHorasDoFuncionario != null)
+                            {
+                                @foreach (HorasFuncionario horas in objHorasDoFuncionario)
+                                {
+                                    <tr>
+                                        <td>@horas.DataRegistro.ToString("dd/MM/yyyy")</td>
+                                        <td>@horas.Entrada.ToString().Substring(0, 5)</td>
+                                        <td>@horas.Saida.ToString().Substring(0, 5)</td>
+                                        <td>@horas.Extras.ToString().Substring(0, 5)</td>
+                                    </tr>
+
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="card mb-6">
+            <div class="card-header">Horas extras de @MesExtenso(selecionadaAnterior.Month) foi @TotalHorasExtenso(totalHorasAnterior)</div>
+            <div class="card-body">
+                <p class="card-text">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Entrada</th>
+                                <th>Saida</th>
+                                <th>Extras</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (objHorasDoFuncionario2 != null)
+                            {
+                                @foreach (HorasFuncionario horas in objHorasDoFuncionario2)
+                                {
+                                    <tr>
+                                        <td>@horas.DataRegistro.ToString("dd/MM/yyyy")</td>
+                                        <td>@horas.Entrada.ToString().Substring(0, 5)</td>
+                                        <td>@horas.Saida.ToString().Substring(0, 5)</td>
+                                        <td>@horas.Extras.ToString().Substring(0, 5)</td>
+                                    </tr>
+
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (MostraBancoPopup)
+{
+    {
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Exibindo registros da entrega</h3>
+                            <button type="button" class="close" @onclick="FechaPopup">
+                                <span aria-hidden="true">X</span>
+                            </button>
+                        </div>
+                        Edita o formulário para a falta atual
+                        <div class="modal-body">
+                            somnete permite editar se for um novo usuario
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Horas Extras</th>
+                                        <th>Justificativa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (BancoDeHoras banco in objBanco)
+                                    {
+                                        <tr>
+                                            <td>@banco.DataRegistro</td>
+                                            <td>@banco.HorasExtras</td>
+                                            <td>@banco.Justificativa</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    List<Funcionario> objFuncionarios;
+    List<HorasFuncionario> objHorasDoFuncionario;
+    List<HorasFuncionario> objHorasDoFuncionario2;
+    Funcionario objFuncionario;
+    List<BancoDeHoras> objBanco;
+    DateTime selecionada = new DateTime();
+    DateTime selecionadaAnterior = new DateTime();
+    TimeSpan totalHoras;
+    TimeSpan totalHorasAnterior;
+
+    List<int> Mes = new List<int>() { 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12 };
+    List<int> Ano = new List<int>() { 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027 };
+    List<string> Nome = new List<string>();
+    static int _diaFechamento = 26;
+    int _ano = DateTime.Now.Year;
+    int _mes = DateTime.Now.Month;
+    int _idFuncionario;
+    bool MostraBancoPopup = false;
+    ClaimsPrincipal UsuarioAtual;
+    ApplicationUser Usuario;
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private void BuscarFuncionarios()
+    {
+        objFuncionarios = objDabaseContext.BuscarFuncionario();
+    }
+
+    private void BuscaHorasFuncionario()
+    {
+        objFuncionario = objFuncionarios.Where(x => x.Id == _idFuncionario).SingleOrDefault();
+        objHorasDoFuncionario = objDabaseContext.BuscaCartaoPonto(objFuncionario, new DateTime(_ano, _mes, _diaFechamento));
+    }
+
+    private string MesExtenso(int _Mes)
+    {
+        string mes = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(_Mes).ToLower();
+        mes = char.ToUpper(mes[0]) + mes.Substring(1);
+        return mes;
+    }
+
+    private void BuscaHorasFuncionarioFiltrado()
+    {
+        //DateTime selecionada = new DateTime(_ano, _mes, _diaFechamento);
+        selecionada = new DateTime(_ano, _mes, _diaFechamento);
+        selecionadaAnterior = new DateTime(_mes == 1 ? _ano - 1 : _ano, _mes == 1 ? 12 : _mes - 1, _diaFechamento);
+
+        objHorasDoFuncionario = objDabaseContext.BuscaCartaoPonto(objFuncionario, selecionada.AddDays(-1),
+        new DateTime(selecionada.Month == 1 ? selecionada.Year - 1 : selecionada.Year, selecionada.Month == 1 ? 12 : selecionada.Month - 1, _diaFechamento));
+
+        objHorasDoFuncionario2 = objDabaseContext.BuscaCartaoPonto(objFuncionario, selecionadaAnterior.AddDays(-1),
+        new DateTime(selecionadaAnterior.Month == 1 ? selecionadaAnterior.Year - 1 : selecionadaAnterior.Year, selecionadaAnterior.Month == 1 ? 12 : selecionadaAnterior.Month - 1, _diaFechamento));
+
+        @if (objHorasDoFuncionario != null)
+        {
+            @foreach (HorasFuncionario horas in objHorasDoFuncionario)
+            {
+                totalHoras += horas.Extras;
+            }
+        }
+
+        @if (objHorasDoFuncionario2 != null)
+        {
+            @foreach (HorasFuncionario horas in objHorasDoFuncionario2)
+            {
+                totalHorasAnterior += horas.Extras;
+            }
+        }
+
+    }
+
+    private void FechaPopup()
+    {
+    }
+
+    private string TotalHorasExtenso(TimeSpan total)
+    {
+        int dias = 0;
+        TimeSpan _total = total;
+
+        while (_total > new TimeSpan(8, 48, 0))
+        {
+            dias++;
+            _total -= new TimeSpan(8, 48, 0);
+        }
+
+        return $"{dias} dia(s), {total.Hours} horas e {total.Minutes} minutos!!";
+    }
+
+    private string BuscaBancoDeHoras()
+    {
+        objBanco = objDabaseContext.BuscaBancoDeHoras(objFuncionario);
+        TimeSpan total = new TimeSpan();
+        int dias = 0;
+
+        foreach (BancoDeHoras banco in objBanco)
+        {
+            total += banco.HorasExtras;
+        }
+
+        while (total > new TimeSpan(8, 48, 0))
+        {
+            dias++;
+            total -= new TimeSpan(8, 48, 0);
+        }
+
+        return $"{dias} dias, {total.Hours} horas e {total.Minutes} minutos de";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        BuscarFuncionarios();
+        UsuarioAtual = (await authenticationStateTask).User;
+        var usuario = await _UserManager.FindByEmailAsync(UsuarioAtual.Identity.Name);
+        Usuario = usuario;
+        objFuncionario = objFuncionarios.Where(x => x.Nome.ToUpper() == Usuario.Name.ToUpper()).FirstOrDefault();
+    }
+}
