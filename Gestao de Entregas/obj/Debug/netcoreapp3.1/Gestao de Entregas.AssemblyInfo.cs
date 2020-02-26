@@ -11,6 +11,7 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap4")]
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("aspnet-Gestao_de_Entregas-9B75EC33-74CE-44E6-B4B2-8C19E06B8E6C")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("Gestao de Entregas")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
