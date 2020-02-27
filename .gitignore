@@ -3,4 +3,9 @@
 ################################################################################
 
 /.vs/Gerenciador de Entregas/v16
+/.vs/
+/.vs/Gerenciador de Entregas
 /Gerenciador de Entregas/bin
+/Gerenciador de Entregas/obj
+/Gestao de Entregas/bin
+/Gestao de Entregas/obj
