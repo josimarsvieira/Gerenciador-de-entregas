@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using Biblioteca_padrao;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -294,6 +294,55 @@ namespace Gestao_de_Entregas.Data
             var ultimaEntrega = _db.EntregaUrgente.OrderBy(c => c.EntregaId).ToList().Last();
             var entregas = _db.EntregaUrgente.OrderByDescending(c => c.EntregaId).Where(c => c.EntregaId > ultimaEntrega.EntregaId - 8).ToList();
             return entregas;
+        }
+
+        public Funcionario BuscarFuncionario(int numeroRegistro)
+        {
+            Funcionario result = _db.Funcionario.FirstOrDefault(x => x.Registro == numeroRegistro);
+            return result;
+        }
+
+        public List<Funcionario> BuscarFuncionario()
+        {
+            List<Funcionario> todosFuncionarios = _db.Funcionario.ToList();
+            return todosFuncionarios;
+        }
+
+        public List<HorasFuncionario> BuscaCartaoPonto(Funcionario funcionario, DateTime dataBusca)
+        {
+            List<HorasFuncionario> Cartao = _db.HorasFuncionarios.AsQueryable().Where(x => x.Funcionario == funcionario &&
+            x.DataRegistro.Month == dataBusca.Month &&
+            x.DataRegistro.Year == dataBusca.Year).OrderBy(x => x.DataRegistro).ToList();
+            return Cartao;
+        }
+
+        public List<HorasFuncionario> BuscaCartaoPonto(Funcionario funcionario, DateTime dataFinal, DateTime dataInicial)
+        {
+            List<HorasFuncionario> Cartao = _db.HorasFuncionarios.AsQueryable().Where(x => x.Funcionario == funcionario &&
+            x.DataRegistro <= dataFinal &&
+            x.DataRegistro >= dataInicial).OrderBy(x => x.DataRegistro).ToList();
+            return Cartao;
+        }
+
+        public List<BancoDeHoras> BuscaBancoDeHoras(Funcionario funcionario)
+        {
+            List<BancoDeHoras> Banco = _db.BancoDeHoras.AsQueryable().Where(x => x.Funcionario == funcionario).OrderBy(x => x.DataRegistro).ToList();
+            return Banco;
+        }
+
+        /// <summary>
+        /// Recupera o banco de horas de um funcionario especifico, filtrado pelo mês e ano.
+        /// </summary>
+        /// <param name="funcionario">Objeto do tipo funcionario recuperado do BD.</param>
+        /// <param name="mes">Mes referente ao periodo desejado para recuperação.</param>
+        /// <param name="ano">Ano referente ao periodo desejado para recuperação.</param>
+        /// <returns>Retorna um IEnumerable contendo uma lista de todos os registros encontrados.</returns>
+        public List<BancoDeHoras> BuscaBancoDeHorasFiltrado(Funcionario funcionario, DateTime dataBusca)
+        {
+            List<BancoDeHoras> BancoFiltrado = _db.BancoDeHoras.AsQueryable().Where(x => x.Funcionario == funcionario &&
+            x.DataRegistro.Month == dataBusca.Month &&
+            x.DataRegistro.Year == dataBusca.Year).ToList();
+            return BancoFiltrado;
         }
     }
 }

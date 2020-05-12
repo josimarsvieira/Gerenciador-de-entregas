@@ -2,10 +2,17 @@
 # Este arquivo .gitignore foi criado automaticamente pelo Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/Gerenciador de Entregas/v16
-/.vs/
-/.vs/Gerenciador de Entregas
-/Gerenciador de Entregas/bin
-/Gerenciador de Entregas/obj
-/Gestao de Entregas/bin
-/Gestao de Entregas/obj
+.vs/
+.vs/Gerenciador de Entregas
+Gerenciador de Entregas/bin
+Gerenciador de Entregas/obj
+Gestao de Entregas/bin
+Gestao de Entregas/obj
+Aplicativo Gerenciador/bin
+Aplicativo Gerenciador/obj
+Banco de Horas ADM/bin
+Banco de Horas ADM/obj
+Biblioteca padrao/bin
+Biblioteca padrao/obj
+Calculador de Horas/bin
+Calculador de Horas/obj

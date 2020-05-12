@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Biblioteca_padrao;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,5 +27,17 @@ namespace Gestao_de_Entregas.Data
         public DbSet<FaltaStatus> FaltaStatus { get; set; }
         public DbSet<ColetaStatus> ColetaStatus { get; set; }
         public DbSet<EntregaUrgenteStatus> EntregaUrgenteStatus { get; set; }
+
+        public DbSet<HorasFuncionario> HorasFuncionarios { get; private set; }
+
+        /// <summary>
+        /// Representação da tabela funcionario no banco de dados.
+        /// </summary>
+        public DbSet<Funcionario> Funcionario { get; private set; }
+
+        /// <summary>
+        /// Representação da tabela Banco de Horas no banco de dados.
+        /// </summary>
+        public DbSet<BancoDeHoras> BancoDeHoras { get; private set; }
     }
 }

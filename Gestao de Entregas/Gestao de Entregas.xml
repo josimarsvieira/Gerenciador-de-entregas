@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gestao de Entregas</name>
+    </assembly>
+    <members>
+        <member name="P:Gestao_de_Entregas.Data.ApplicationDbContext.Funcionario">
+            <summary>
+            Representação da tabela funcionario no banco de dados.
+            </summary>
+        </member>
+        <member name="P:Gestao_de_Entregas.Data.ApplicationDbContext.BancoDeHoras">
+            <summary>
+            Representação da tabela Banco de Horas no banco de dados.
+            </summary>
+        </member>
+        <member name="M:Gestao_de_Entregas.Data.GerenciadorService.ObterEntregaUrgente">
+            <summary>
+            Retorna Lista de entregas classificadas como urgente
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Gestao_de_Entregas.Data.GerenciadorService.ObterColetaFeita">
+            <summary>
+            Retorna Lista de entregas classificadas como urgente
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Gestao_de_Entregas.Data.GerenciadorService.BuscaBancoDeHorasFiltrado(Biblioteca_padrao.Funcionario,System.DateTime)">
+            <summary>
+            Recupera o banco de horas de um funcionario especifico, filtrado pelo mês e ano.
+            </summary>
+            <param name="funcionario">Objeto do tipo funcionario recuperado do BD.</param>
+            <param name="mes">Mes referente ao periodo desejado para recuperação.</param>
+            <param name="ano">Ano referente ao periodo desejado para recuperação.</param>
+            <returns>Retorna um IEnumerable contendo uma lista de todos os registros encontrados.</returns>
+        </member>
+    </members>
+</doc>

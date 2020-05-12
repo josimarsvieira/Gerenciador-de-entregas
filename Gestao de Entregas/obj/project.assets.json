@@ -2744,6 +2744,19 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "Biblioteca padrao/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "System.ComponentModel.Annotations": "4.7.0"
+        },
+        "compile": {
+          "bin/placeholder/Biblioteca padrao.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Biblioteca padrao.dll": {}
+        }
       }
     }
   },
@@ -8838,10 +8851,16 @@
         "system.xml.xmlserializer.4.3.0.nupkg.sha512",
         "system.xml.xmlserializer.nuspec"
       ]
+    },
+    "Biblioteca padrao/1.0.0": {
+      "type": "project",
+      "path": "../Biblioteca padrao/Biblioteca padrao.csproj",
+      "msbuildProject": "../Biblioteca padrao/Biblioteca padrao.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
+      "Biblioteca padrao >= 1.0.0",
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore >= 3.1.1",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 3.1.1",
       "Microsoft.AspNetCore.Identity.UI >= 3.1.1",
@@ -8862,11 +8881,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\josim\\source\\Gerenciador de entregas\\Gestao de Entregas\\Gestao de Entregas.csproj",
+      "projectUniqueName": "C:\\Users\\josim\\source\\Gerenciador de Entregas\\Gestao de Entregas\\Gestao de Entregas.csproj",
       "projectName": "Gestao de Entregas",
-      "projectPath": "C:\\Users\\josim\\source\\Gerenciador de entregas\\Gestao de Entregas\\Gestao de Entregas.csproj",
+      "projectPath": "C:\\Users\\josim\\source\\Gerenciador de Entregas\\Gestao de Entregas\\Gestao de Entregas.csproj",
       "packagesPath": "C:\\Users\\josim\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\josim\\source\\Gerenciador de entregas\\Gestao de Entregas\\obj\\",
+      "outputPath": "C:\\Users\\josim\\source\\Gerenciador de Entregas\\Gestao de Entregas\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Microsoft\\Xamarin\\NuGet\\",
@@ -8886,7 +8905,11 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\josim\\source\\Gerenciador de Entregas\\Biblioteca padrao\\Biblioteca padrao.csproj": {
+              "projectPath": "C:\\Users\\josim\\source\\Gerenciador de Entregas\\Biblioteca padrao\\Biblioteca padrao.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -8957,7 +8980,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

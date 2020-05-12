@@ -1,0 +1,63 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Calculador_de_Horas"
+        xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" x:Class="Calculador_de_Horas.MainWindow"
+        mc:Ignorable="d"
+        x:Name="JanelaPrincipal"
+        Title="Calculador de Horas" Height="730" Width="677" MinHeight="700" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid Margin="0,0,3,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*" />
+            <ColumnDefinition Width="50*" />
+            <ColumnDefinition Width="50*" />
+            <ColumnDefinition Width="50*" />
+            <ColumnDefinition Width="50*" />
+            <ColumnDefinition Width="50*" />
+            <ColumnDefinition Width="50*" />
+        </Grid.ColumnDefinitions>
+        <Button x:Name="btnAdicionar" Content="Adicionar" Margin="5,159,5,0" VerticalAlignment="Top" Click="BtnAdicionar_Click" Grid.Column="6" Height="20" TabIndex="6" />
+
+        <Label Content="ENTRADA" Margin="5,131,5,0" VerticalAlignment="Top" Height="26" Grid.Column="1" />
+        <Label Content="SAIDA" Margin="5,131,5,0" VerticalAlignment="Top" Grid.Column="4" Height="26" />
+        <Label Content="SAI. ALMOÇO" Margin="5,131,5,0" VerticalAlignment="Top" Grid.Column="2" Height="26" />
+        <Label Content="RET. ALMOÇO" Margin="5,131,5,0" VerticalAlignment="Top" Grid.Column="3" Height="29" />
+        <Label Content="EXTRAS" Margin="5,131,5,0" VerticalAlignment="Top" Grid.Column="5" Height="26" />
+        <Label Content="Cartão Ponto Automatico" Margin="5,10,5,0" VerticalAlignment="Top" Height="26" Grid.Column="0" Grid.ColumnSpan="7" HorizontalAlignment="Center" />
+        <Label Content="DATA" Margin="5,131,5,0" VerticalAlignment="Top" Height="26" />
+        <Label x:Name="lblTotalExtras" Content=" " Grid.Column="6" Margin="5,128,5,0" VerticalAlignment="Top" Height="26" />
+        <Button x:Name="btnAtualizar" Content="Atualizar" Grid.Column="6" Margin="5,75,5,0" VerticalAlignment="Top" Click="btnAtualizar_Click" IsTabStop="False" Height="20" />
+        <Label Content="Registro:" Margin="5,46,5,0" VerticalAlignment="Top" Height="26" />
+        <TextBox x:Name="txtRegistro" Grid.Column="1" Height="23" Margin="5,49,5,0" TextWrapping="Wrap" VerticalAlignment="Top" MaxLines="1" MaxLength="4" IsTabStop="False" UseLayoutRounding="False" VerticalScrollBarVisibility="Disabled" IsEnabled="False" RenderTransformOrigin="0.449,-0.565" />
+        <Label Content="Nome:" Margin="5,77,5,0" VerticalAlignment="Top" Height="26" />
+        <Label x:Name="txtNome" Content="" Grid.Column="1" Margin="5,77,5,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" />
+        <Label Content="Data:" Grid.Column="3" Margin="5,46,50,0" VerticalAlignment="Top" Height="26" />
+        <ComboBox x:Name="cbMinutosEntrada" Margin="45,157,5,0" SelectedIndex="0" Grid.Column="1" Height="22" VerticalAlignment="Top" TabIndex="1" SelectionChanged="CbMinutosEntrada_SelectionChanged" />
+        <ComboBox x:Name="cbHoraEntrada" Margin="5,157,45,0" SelectedIndex="0" Grid.Column="1" Height="22" VerticalAlignment="Top" TabIndex="0" SelectionChanged="CbHoraEntrada_SelectionChanged" />
+        <ComboBox x:Name="cbMinutosSaidaAlmoco" Margin="45,157,5,0" SelectedIndex="0" Grid.Column="2" Height="22" VerticalAlignment="Top" TabIndex="3" SelectionChanged="cbMinutosSaidaAlmoco_SelectionChanged" />
+        <ComboBox x:Name="cbHoraSaidaAlmoco" Margin="5,157,45,0" SelectedIndex="0" Grid.Column="2" Height="22" VerticalAlignment="Top" TabIndex="2" SelectionChanged="cbHoraSaidaAlmoco_SelectionChanged" />
+        <ComboBox x:Name="cbMinutosRetornoAlmoco" Margin="45,157,5,0" SelectedIndex="0" Grid.Column="3" Height="22" VerticalAlignment="Top" TabIndex="5" SelectionChanged="cbMinutosRetornoAlmoco_SelectionChanged" />
+        <ComboBox x:Name="cbHoraRetornoAlmoco" Margin="5,157,45,0" SelectedIndex="0" Grid.Column="3" Height="22" VerticalAlignment="Top" TabIndex="4" SelectionChanged="cbHoraRetornoAlmoco_SelectionChanged" />
+        <ComboBox x:Name="cbMinutosSaida" Margin="45,157,5,0" SelectedIndex="0" Grid.Column="4" Height="22" VerticalAlignment="Top" TabIndex="7" SelectionChanged="CbMinutosSaida_SelectionChanged" />
+        <ComboBox x:Name="cbHoraSaida" Margin="5,157,45,0" SelectedIndex="0" Grid.Column="4" Height="22" VerticalAlignment="Top" TabIndex="6" SelectionChanged="CbHoraSaida_SelectionChanged" />
+        <ComboBox x:Name="cbMinutosExtras" Margin="45,157,5,0" SelectedIndex="0" Grid.Column="5" Height="22" VerticalAlignment="Top" TabIndex="9" />
+        <ComboBox x:Name="cbHoraExtras" Margin="5,157,45,0" SelectedIndex="23" Grid.Column="5"  Height="22" VerticalAlignment="Top" TabIndex="8" />
+        <Label Content="Banco de Horas:" Grid.Column="5" Margin="0,100,0,0" VerticalAlignment="Top" Height="26" />
+        <Label x:Name="lblBancoHoras" Content="" Grid.Column="6" Margin="5,100,5,0" VerticalAlignment="Top" Height="26" />
+        <Button x:Name="btnBancoHoras" Content="Banco" Grid.Column="6" Margin="5,184,5,0" VerticalAlignment="Top" IsEnabled="False" Click="BtnBancoHoras_Click" Height="20" />
+        <TextBlock x:Name="txtBlockDias" Margin="5,190,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" />
+        <TextBlock x:Name="txtBlockEntrada" Grid.Column="1" Margin="5,190,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" />
+        <TextBlock x:Name="txtBlockSaidaAlmoco" Grid.Column="2" Margin="5,190,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" />
+        <TextBlock x:Name="txtBlockRetornoAlmoco" Grid.Column="3" Margin="5,190,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" />
+        <TextBlock x:Name="txtBlockSaida" Grid.Column="4" HorizontalAlignment="Center" Margin="5,190,0,0" VerticalAlignment="Top" />
+        <TextBlock x:Name="txtBlockExtras" Grid.Column="5" HorizontalAlignment="Center" Margin="5,190,0,0" VerticalAlignment="Top" />
+        <Label Content="Dias Folga:" Margin="5,100,5,0" VerticalAlignment="Top" Height="26" />
+        <Label x:Name="lblHoraFolga" Content="" Grid.Column="1" Margin="5,100,5,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="26" />
+        <DatePicker x:Name="DPdata" Grid.Column="3" Margin="50,49,10,0" VerticalAlignment="Top" RenderTransformOrigin="0.529,0.417" SelectedDate="2019-01-01" Height="24" Grid.ColumnSpan="2" />
+        <Button x:Name="btnBuscar" Content="Buscar" Grid.Column="6" Margin="5,52,5,0" VerticalAlignment="Top" Click="BtnBuscar_Click" Height="20" />
+        <Button x:Name="btnDeletar" Content="Deletar" Margin="5,209,5,0" VerticalAlignment="Top" Grid.Column="6" Height="20" Click="BtnDeletar_Click" IsEnabled="False" />
+        <Button x:Name="btnFechar" Content="Fechar Folha" Margin="5,234,5,0" VerticalAlignment="Top" Grid.Column="6" Height="20" Click="btnFechar_Click" IsEnabled="False" />
+    </Grid>
+</Window>

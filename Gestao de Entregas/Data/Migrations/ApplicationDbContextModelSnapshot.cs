@@ -17,6 +17,97 @@ namespace Gestao_de_Entregas.Data.Migrations
                 .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("Calculador_de_Horas.Entities.BancoDeHoras", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DataRegistro")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("FuncionarioId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("HorasExtras")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("Justificativa")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FuncionarioId");
+
+                    b.ToTable("BancoDeHoras");
+                });
+
+            modelBuilder.Entity("Calculador_de_Horas.Entities.Funcionario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Funcao")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<TimeSpan>("HoraAlmocoRetorno")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan>("HoraAlmocoSaida")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan>("HoraIncio")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan>("HoraTermino")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("Nome")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<int>("Registro")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Funcionario");
+                });
+
+            modelBuilder.Entity("Calculador_de_Horas.Entities.HorasFuncionario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("AlmocoRetorno")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan>("AlmocoSaida")
+                        .HasColumnType("time(6)");
+
+                    b.Property<DateTime>("DataRegistro")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<TimeSpan>("Entrada")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan>("Extras")
+                        .HasColumnType("time(6)");
+
+                    b.Property<int?>("FuncionarioId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("Saida")
+                        .HasColumnType("time(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FuncionarioId");
+
+                    b.ToTable("HorasFuncionarios");
+                });
+
             modelBuilder.Entity("Gestao_de_Entregas.Data.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -341,15 +432,15 @@ namespace Gestao_de_Entregas.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "cd363aee-4900-4952-8461-d1ef75207373",
-                            ConcurrencyStamp = "943625f6-8a41-4769-a93a-e6bd574fca3c",
+                            Id = "b8bb3bbf-97ac-46f5-9e58-dce74ea2f07f",
+                            ConcurrencyStamp = "f4b7867a-3223-42c0-a0bf-6a793db7f5dd",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "b4d0d3ed-f8ff-4679-a20b-ca2009b52d1c",
-                            ConcurrencyStamp = "bb0869eb-e324-4e82-8730-70eea2d9e389",
+                            Id = "acf68d4b-9dbf-4f16-8696-34933f6815ae",
+                            ConcurrencyStamp = "03083eb3-4bc2-44b7-883f-1726f988a1e1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -459,6 +550,20 @@ namespace Gestao_de_Entregas.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Calculador_de_Horas.Entities.BancoDeHoras", b =>
+                {
+                    b.HasOne("Calculador_de_Horas.Entities.Funcionario", "Funcionario")
+                        .WithMany("BancoDeHoras")
+                        .HasForeignKey("FuncionarioId");
+                });
+
+            modelBuilder.Entity("Calculador_de_Horas.Entities.HorasFuncionario", b =>
+                {
+                    b.HasOne("Calculador_de_Horas.Entities.Funcionario", "Funcionario")
+                        .WithMany("CartaoPonto")
+                        .HasForeignKey("FuncionarioId");
                 });
 
             modelBuilder.Entity("Gestao_de_Entregas.Data.Coleta", b =>
